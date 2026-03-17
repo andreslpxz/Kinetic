@@ -11,7 +11,7 @@ interface DraggableComponentProps {
 
 export default function DraggableComponent({ node }: DraggableComponentProps) {
   const { selectNode, selectedNodeId } = useAppStore();
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: node.id,
     data: { type: node.type, id: node.id, isTemplate: false }
   });
@@ -20,6 +20,7 @@ export default function DraggableComponent({ node }: DraggableComponentProps) {
     transform: CSS.Translate.toString(transform),
     ...node.styles,
     border: selectedNodeId === node.id ? '2px solid #3b82f6' : '1px transparent',
+    zIndex: isDragging ? 50 : undefined,
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -34,7 +35,7 @@ export default function DraggableComponent({ node }: DraggableComponentProps) {
       case 'image':
         return <img src={node.props.src} alt="Uploaded" className="max-w-full h-auto" />;
       case 'button':
-        return <button className="bg-blue-600 text-white px-4 py-2 rounded">{node.props.label}</button>;
+        return <button className="bg-blue-600 text-white px-4 py-2 rounded pointer-events-auto">{node.props.label}</button>;
       case 'input':
         return (
           <input
@@ -65,7 +66,7 @@ export default function DraggableComponent({ node }: DraggableComponentProps) {
       {...listeners}
       {...attributes}
       onClick={handleClick}
-      className="relative group p-2 cursor-move transition-all"
+      className="relative group p-2 cursor-grab active:cursor-grabbing transition-all"
     >
       {renderContent()}
     </div>
