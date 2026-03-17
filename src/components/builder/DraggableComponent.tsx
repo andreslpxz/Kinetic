@@ -35,7 +35,16 @@ export default function DraggableComponent({ node }: DraggableComponentProps) {
       case 'image':
         return <img src={node.props.src} alt="Uploaded" className="max-w-full h-auto" />;
       case 'button':
-        return <button className="bg-blue-600 text-white px-4 py-2 rounded pointer-events-auto">{node.props.label}</button>;
+        return (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded pointer-events-auto hover:bg-blue-700"
+          >
+            {node.props.label}
+          </button>
+        );
       case 'input':
         return (
           <input
@@ -49,7 +58,9 @@ export default function DraggableComponent({ node }: DraggableComponentProps) {
               });
             }}
             onPointerDown={(e) => e.stopPropagation()}
-            className="border p-2 rounded w-full pointer-events-auto"
+            onPointerMove={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+            className="border p-2 rounded w-full pointer-events-auto focus:outline-none focus:border-blue-500"
           />
         );
       case 'ai-agent':
@@ -65,10 +76,14 @@ export default function DraggableComponent({ node }: DraggableComponentProps) {
       style={style}
       {...listeners}
       {...attributes}
-      onClick={handleClick}
       className="relative group p-2 cursor-grab active:cursor-grabbing transition-all"
     >
-      {renderContent()}
+      <div
+        onClick={handleClick}
+        className="w-full h-full"
+      >
+        {renderContent()}
+      </div>
     </div>
   );
 }
